@@ -110,10 +110,24 @@ jobs:
           chmod +x $DIY_P2_SH
           cd openwrt
           $GITHUB_WORKSPACE/$DIY_P2_SH
+ 
+        #name: ⌨️ SSH connection to Menuconfig
+        #uses: mxschmitt/action-tmate@v3
+        #timeout-minutes: 15
 
-      - name: ⌨️ SSH connection to Menuconfig
-        uses: mxschmitt/action-tmate@v3
-        timeout-minutes: 15
+      # ===== 改动点：tmate -> upterm =====
+      - name: ⌨️ SSH connection to Menuconfig (upterm)
+        uses: lhotari/action-upterm@v1
+        timeout-minutes: 120          # 会话最长保留时间，按需调整
+        with:
+          # 只允许触发本 workflow 的账号连接（需先把 SSH 公钥添加到 GitHub 账号）
+          limit-access-to-actor: true
+          # 也可改成指定用户列表（去掉上面那行）
+          #limit-access-to-users: yourname,teammate
+          # 默认就是官方服务器，一般不用写；自建时才需要
+          #upterm-server: ssh://uptermd.upterm.dev:22
+          # 无人连接时多久自动关闭
+          wait-timeout-minutes: 30
           
       - name: 📤 Push config to main branch
         run: |
